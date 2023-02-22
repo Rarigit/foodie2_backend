@@ -6,34 +6,34 @@ import json
 
 
 
-@app.post('/api/client-login')
-def insert_client_login():
+@app.post('/api/restaurant-login')
+def insert_restaurant_login():
     required_data = ['email', 'password',]
     check_result = check_data(request.json, required_data)
     if check_result != None:
         return check_result
     email = request.json.get('email')
     password = request.json.get('password')
-    result = run_statement("CALL insert_client_login(?,?)", [email, password])
+    result = run_statement("CALL insert_restaurant_login(?,?)", [email, password])
     if (type(result) == list):
         response = {
-                        'clientId' : result[0][0],
+                        'restaurantId' : result[0][0],
                         'token' : result[0][1],
         }
-        print("New Client-login session recorded in DB!")
+        print("New Restaurant-login session recorded in DB!")
         return json.dumps(response, default=str)
     else:
         return "Sorry, something went wrong"
     
 
-@app.delete('/api/client-login')
-def delete_client_login():
+@app.delete('/api/restaurant-login')
+def delete_restaurant_login():
     check_result = check_data(request.headers, ['token'])
     if check_result != None:
         return check_result
     token = request.headers.get('token')
-    result = run_statement("CALL delete_clog_tkarg(?)", [token])
+    result = run_statement("CALL del_restaurant_login(?)", [token])
     if result == None:
-        return make_response(jsonify("Successfully deleted Client login-session"), 200)
+        return make_response(jsonify("Successfully deleted Restaurant login-session"), 200)
     else:
-        return make_response(jsonify("Failed to delete Client login-session. Something went wrong"), 500)
+        return make_response(jsonify("Failed to delete Restaurant login-session. Something went wrong"), 500)
