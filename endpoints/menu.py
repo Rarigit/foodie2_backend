@@ -2,7 +2,7 @@ from app import app
 from flask import request, make_response, jsonify
 from dbhelpers import run_statement
 from validhelpers import check_data
-import json
+# import json
 
 @app.get('/api/menu')
 def get_menu():
