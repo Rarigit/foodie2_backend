@@ -3,6 +3,8 @@ from flask import request, make_response, jsonify
 from dbhelpers import run_statement
 from validhelpers import check_data
 import json
+import bcrypt
+import time
 
 
 # Make sure keys are put in the same order as they are in the DB tables. That way it matches with the postman response output
@@ -32,10 +34,15 @@ def post_restaurant():
     email = request.json.get('email')
     phone_num = request.json.get('phoneNum')
     password = request.json.get('password')
+    start = time.time_ns()
+    salt = bcrypt.gensalt(rounds=12)
+    hash_result = bcrypt.hashpw(password.encode(), salt)
+    finish = time.time_ns()
+    print(f"This encryption took {(finish-start)/1000000000} seconds")
     profile_url = request.json.get('profileUrl')
     banner_url = request.json.get('bannerUrl')
     bio = request.json.get('bio')
-    result = run_statement("CALL insert_restaurant(?,?,?,?,?,?,?,?,?)", [name, address, city, email, phone_num, password, profile_url, banner_url, bio])
+    result = run_statement("CALL insert_restaurant(?,?,?,?,?,?,?,?,?)", [name, address, city, email, phone_num, hash_result, profile_url, banner_url, bio])
     if (type(result) == list):
         response = {
                         'restaurantId' : result[0][0],
@@ -59,12 +66,17 @@ def patch_restaurant():
     email = request.json.get('email')
     phone = request.json.get('phone')
     password = request.json.get('password')
+    start = time.time_ns()
+    salt = bcrypt.gensalt(rounds=12)
+    hash_result = bcrypt.hashpw(password.encode(), salt)
+    finish = time.time_ns()
+    print(f"This encryption took {(finish-start)/1000000000} seconds")
     profile_url = request.json.get('profileUrl')
     banner_url = request.json.get('bannerUrl')
     bio = request.json.get('bio')
-    result = run_statement("CALL edit_restaurant_tokenarg(?,?,?,?,?,?,?,?,?,?)", [token_input, name, address, city, email, phone, password, profile_url, banner_url, bio])
+    result = run_statement("CALL edit_restaurant_tokenarg(?,?,?,?,?,?,?,?,?,?)", [token_input, name, address, city, email, phone, hash_result, profile_url, banner_url, bio])
     if result == None:
-        return make_response(jsonify("Client info updated successfully"), 200)
+        return make_response(jsonify("Restaurant info updated successfully"), 200)
     else:
         return make_response(jsonify("Update failed. Something went wrong"), 500)
 

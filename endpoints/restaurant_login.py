@@ -3,7 +3,8 @@ from flask import request, make_response, jsonify
 from dbhelpers import run_statement
 from validhelpers import check_data
 import json
-
+import bcrypt
+import time
 
 
 @app.post('/api/restaurant-login')
@@ -14,17 +15,26 @@ def insert_restaurant_login():
         return check_result
     email = request.json.get('email')
     password = request.json.get('password')
-    result = run_statement("CALL insert_restaurant_login(?,?)", [email, password])
-    if (type(result) == list):
-        response = {
-                        'restaurantId' : result[0][0],
-                        'token' : result[0][1],
-        }
-        print("New Restaurant-login session recorded in DB!")
-        return json.dumps(response, default=str)
+    result = run_statement("CALL restaurant_login_step1(?)", [email])
+    if isinstance(result, list) and len(result) > 0 and len(result[0]) > 0:
+        restaurant_id_value = result[0][0]
+        hashed_password = result[0][1]
+        if (bcrypt.checkpw(password.encode(), hashed_password.encode())):
+            result2 = run_statement("CALL insert_restlogin_step2(?)", [restaurant_id_value])
+            if isinstance(result2, list):
+                response = {
+                            'restaurantId' : result2[0][0],
+                            'token' : result2[0][1],
+                }
+                print("New Restaurant-login session recorded in DB!")
+                return json.dumps(response, default=str)
+            else:
+                return "Sorry, something went wrong"
+        else:
+            return "Invalid email or password"
     else:
-        return "Sorry, something went wrong"
-    
+        return "Invalid email or password"
+
 
 @app.delete('/api/restaurant-login')
 def delete_restaurant_login():

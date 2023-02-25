@@ -3,6 +3,8 @@ from flask import request, make_response, jsonify
 from dbhelpers import run_statement
 from validhelpers import check_data
 import json
+import bcrypt
+import time
 
 
 
@@ -34,9 +36,14 @@ def insert_client():
     last_name = request.json.get('lastName')
     email = request.json.get('email')
     password = request.json.get('password')
+    start = time.time_ns()
+    salt = bcrypt.gensalt(rounds=12)
+    hash_result = bcrypt.hashpw(password.encode(), salt)
+    finish = time.time_ns()
+    print(f"This encryption took {(finish-start)/1000000000} seconds")
     created_at = request.json.get('createdAt')
     picture_url = request.json.get('pictureUrl')
-    result = run_statement("CALL insert_client(?,?,?,?,?,?,?)", [username, first_name, last_name, email, password, created_at, picture_url])
+    result = run_statement("CALL insert_client(?,?,?,?,?,?,?)", [username, first_name, last_name, email, hash_result, created_at, picture_url])
     if (type(result) == list):
         response = {
                         'clientId' : result[0][0],
@@ -55,11 +62,16 @@ def patch_client():
         return check_result
     token_input = request.headers.get("token")
     password = request.json.get('password')
+    start = time.time_ns()
+    salt = bcrypt.gensalt(rounds=12)
+    hash_result = bcrypt.hashpw(password.encode(), salt)
+    finish = time.time_ns()
+    print(f"This encryption took {(finish-start)/1000000000} seconds")
     username = request.json.get('userName')
     first_name = request.json.get('firstName')
     last_name = request.json.get('lastName')
     picture_url = request.json.get('pictureUrl')
-    result = run_statement("CALL edit_client_tokenarg(?,?,?,?,?,?)", [token_input, password, username, first_name, last_name, picture_url])
+    result = run_statement("CALL edit_client_tokenarg(?,?,?,?,?,?)", [token_input, hash_result, username, first_name, last_name, picture_url])
     if result == None:
         return make_response(jsonify("Client info updated successfully"), 200)
     else:
