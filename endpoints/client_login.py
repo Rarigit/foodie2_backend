@@ -44,8 +44,14 @@ def delete_client_login():
     if check_result != None:
         return check_result
     token = request.headers.get('token')
-    result = run_statement("CALL delete_clog_tkarg(?)", [token])
-    if result == None:
-        return make_response(jsonify("Successfully deleted Client login-session"), 200)
+    client_id_input = request.json.get("clientId")
+    result_verify = run_statement("CALL verify_delete_clientlogin(?,?)", [client_id_input, token])
+    print(result_verify)
+    if result_verify[0][0] == 1:
+        result = run_statement("CALL delete_clog_tkarg(?)", [token])
+        if result == None:
+            return make_response(jsonify("Successfully deleted Client login-session"), 200)
+        else:
+            return make_response(jsonify("Failed to delete Client login-session. Something went wrong"), 500)
     else:
-        return make_response(jsonify("Failed to delete Client login-session. Something went wrong"), 500)
+        return "Invalid credentials. Denied access!"

@@ -101,9 +101,10 @@ def patch_order_client():
     if check_result != None:
         return check_result
     token_input = request.headers.get('clientToken')
+    client_id_input = request.json.get("clientId")
     is_cancelled_input = request.json.get('isCancelled')
-    client_id_input = request.json.get('clientId')
-    result_verify = run_statement("CALL get_cliord_patch_verify(?,?)", [token_input, client_id_input])
+    result_verify = run_statement("CALL get_cliord_patch_verify(?,?)", [client_id_input, token_input])
+    # Follow the same parameter order as in the stored procedure or else truncation errors occur
     print(result_verify)
     if result_verify[0][0] == 1:
         # is_cancelled_input = request.json.get('isCancelled')
@@ -127,11 +128,17 @@ def patch_order_restaurant():
     if check_result != None:
         return check_result
     token_input = request.headers.get("restToken")
+    restaurant_id_input = request.json.get('restaurantId')
     is_confirmed_input = request.json.get('isConfirmed')
     is_completed_input = request.json.get('isCompleted')
-    id_input = request.json.get('orderId')
-    result = run_statement("CALL edit_restaurant_order(?,?,?,?)", [token_input, is_confirmed_input, is_completed_input, id_input])
-    if result == None:
-        return make_response(jsonify("Restaurant Order info updated successfully"), 200)
+    result_verify = run_statement("CALL verify_patch_order_store(?,?)", [restaurant_id_input, token_input])
+    print(result_verify)
+    if result_verify[0][0] == 1:
+        id_input = request.json.get('orderId')
+        result = run_statement("CALL edit_restaurant_order(?,?,?,?)", [token_input, is_confirmed_input, is_completed_input, id_input])
+        if result == None:
+            return make_response(jsonify("Restaurant Order info updated successfully"), 200)
+        else:
+            return make_response(jsonify("Failed to update restaurant order info. Error"), 500)
     else:
-        return make_response(jsonify("Failed to update restaurant info. Something went wrong"), 500)
+        return "Credential Authentication failed. Please try again!"

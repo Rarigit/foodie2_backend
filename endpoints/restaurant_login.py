@@ -42,8 +42,14 @@ def delete_restaurant_login():
     if check_result != None:
         return check_result
     token = request.headers.get('token')
-    result = run_statement("CALL del_restaurant_login(?)", [token])
-    if result == None:
-        return make_response(jsonify("Successfully deleted Restaurant login-session"), 200)
+    restaurant_id_input = request.json.get("restaurantId")
+    result_verify = run_statement("CALL verify_store_login(?,?)", [restaurant_id_input, token])
+    print(result_verify)
+    if result_verify[0][0] == 1:
+        result = run_statement("CALL del_restaurant_login(?)", [token])
+        if result == None:
+            return make_response(jsonify("Successfully deleted Restaurant login-session"), 200)
+        else:
+            return make_response(jsonify("Failed to delete Restaurant login-session. Something went wrong"), 500)
     else:
-        return make_response(jsonify("Failed to delete Restaurant login-session. Something went wrong"), 500)
+        return "Invalid credentials. Denied access!"

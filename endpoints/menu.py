@@ -28,17 +28,24 @@ def insert_menu():
         return check_result
     # No need for keys i guess on post request
     token_input = request.headers.get("restToken")
-    name = request.json.get('name')
-    description = request.json.get('description')
-    price = request.json.get('price')
-    image_url = request.json.get('imageUrl')
-    restaurant_id = request.json.get('restaurantId')
-    result = run_statement("CALL insert_menu_argtk(?,?,?,?,?,?)", [token_input ,name, description, price, image_url, restaurant_id])
-    if result == None:
-        return make_response(jsonify("Menu inserted successfully"), 200)
+    restaurant_id_input = request.json.get('restaurantId')
+    result_verify = run_statement("CALL verify_post_menu(?,?)", [restaurant_id_input, token_input])
+    print(result_verify)
+    if result_verify[0][0] == 1:
+        name = request.json.get('name')
+        description = request.json.get('description')
+        price = request.json.get('price')
+        image_url = request.json.get('imageUrl')
+        # restaurant_id = request.json.get('restaurantId')
+        result = run_statement("CALL insert_menu_argtk(?,?,?,?,?,?)", [token_input ,name, description, price, image_url, restaurant_id_input])
+        if result == None:
+            return make_response(jsonify("Menu inserted successfully"), 200)
+        else:
+            return make_response(jsonify("Failed to insert menu. Something went wrong"), 500)
     else:
-        return make_response(jsonify("Failed to insert menu. Something went wrong"), 500)
-    
+        return "Credential Authentication failed. Error!"
+
+
 
 @app.patch('/api/menu')
 def patch_menu():
@@ -47,17 +54,23 @@ def patch_menu():
     if check_result != None:
         return check_result
     token_input = request.headers.get("restToken")
-    id = request.json.get('menuId')
-    name = request.json.get('name')
-    description = request.json.get('description')
-    price = request.json.get('price')
-    image_url = request.json.get('imageUrl')
-    restaurant_id = request.json.get('restaurantId')
-    result = run_statement("CALL edit_menu_argmid(?,?,?,?,?,?,?)", [token_input, id, name, description, price, image_url, restaurant_id])
-    if result == None:
-        return make_response(jsonify("Menu info updated successfully"), 200)
+    restaurant_id_input = request.json.get('restaurantId')
+    result_verify = run_statement("CALL verify_patch_menu(?,?)", [restaurant_id_input, token_input])
+    print(result_verify)
+    if result_verify[0][0] == 1:
+        id = request.json.get('menuId')
+        name = request.json.get('name')
+        description = request.json.get('description')
+        price = request.json.get('price')
+        image_url = request.json.get('imageUrl')
+        # restaurant_id = request.json.get('restaurantId')
+        result = run_statement("CALL edit_menu_argmid(?,?,?,?,?,?,?)", [token_input, id, name, description, price, image_url, restaurant_id_input])
+        if result == None:
+            return make_response(jsonify("Menu info updated successfully"), 200)
+        else:
+            return make_response(jsonify("Menu info update failed. Something went wrong"), 500)
     else:
-        return make_response(jsonify("Menu info update failed. Something went wrong"), 500)
+        return "Credential Authentication Failed. Error!"
 
 
 # Tried format(id) method by using debugger, Couldn't find any data for it as result is truly none so gonna use another method to print better responses to Postman
@@ -67,11 +80,17 @@ def delete_menu():
     if check_result != None:
         return check_result
     token_input = request.headers.get('restToken')
-    id = request.json.get('menuId')
-    result = run_statement("CALL del_menu_argid(?,?)", [token_input, id])
-    if result == None:
-        return make_response(jsonify("Successfully deleted Menu item"), 200)
+    restaurant_id_input = request.json.get('restaurantId')
+    result_verify = run_statement("CALL verify_delete_menu(?,?)", [restaurant_id_input, token_input])
+    print(result_verify)
+    if result_verify[0][0] == 1:
+        id = request.json.get('menuId')
+        result = run_statement("CALL del_menu_argid(?,?)", [token_input, id])
+        if result == None:
+            return make_response(jsonify("Successfully deleted Menu item"), 200)
+        else:
+            return make_response(jsonify("Failed to delete Menu item. Something went wrong"), 500)
     else:
-        return make_response(jsonify("Failed to delete Menu item. Something went wrong"), 500)
+        return "Credential Authentication Failed. Error!"
     
     

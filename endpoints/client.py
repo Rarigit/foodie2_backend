@@ -85,13 +85,17 @@ def delete_client():
     if check_result != None:
         return check_result
     token = request.headers.get('token')
-    result = run_statement("CALL delete_client_tkarg(?)", [token])
-    if result == None:
-        return make_response(jsonify("Successfully deleted client"), 200)
-    # Need to format this correctly deletion action works tho. Done!
+    client_id_input = request.json.get('clientId')
+    result_verify = run_statement("CALL verify_delete_client(?,?)", [client_id_input, token])
+    print(result_verify)
+    if result_verify[0][0] == 1:
+        result = run_statement("CALL delete_client_tkarg(?)", [token])
+        if result == None:
+            return make_response(jsonify("Successfully deleted client"), 200)
+        else:
+            return make_response(jsonify("Failed to delete client. Something went wrong"), 500)
     else:
-        return make_response(jsonify("Failed to delete client. Something went wrong"), 500)
-        # return "Client {} does not exist".format(id)
+        return "Credential Authentication failed. Error!"
     
     
 
