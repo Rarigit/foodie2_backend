@@ -8,11 +8,14 @@ import time
 
 
 # Make sure keys are put in the same order as they are in the DB tables. That way it matches with the postman response output
+# Completed Bonus Restaurant Categories and Bonus Search capabilities by name and Bonus Regional filtering
 @app.get('/api/restaurant')
 def get_restaurant():
     keys = ['id', 'name', 'address', 'city', 'email', 'phoneNum', 'password', 'profileUrl', 'bannerUrl', 'bio']
     restaurant_id = request.args.get("restaurantId")
-    result = run_statement("CALL get_restaurant_argid(?)", [restaurant_id])
+    city_input = request.args.get("searchCity")
+    search_keyword = request.args.get('searchKeyword')
+    result = run_statement("CALL get_restaurant_argid(?,?,?)", [restaurant_id, city_input, search_keyword])
     restaurant_alpha = []
     if (type(result) == list):
         for restaurant in result:

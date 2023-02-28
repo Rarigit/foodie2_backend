@@ -4,12 +4,16 @@ from dbhelpers import run_statement
 from validhelpers import check_data
 # import json
 
+
+# Completed bonus menu category and Bonus search capability for menu items
 @app.get('/api/menu')
 def get_menu():
-    keys = ['id', 'name', 'description', 'price', 'imageUrl', 'restaurantId']
+    keys = ['id', 'name', 'description', 'price', 'imageUrl', 'restaurantId', 'searchCategory']
     restaurant_id = request.args.get("restaurantId")
     menu_id = request.args.get("menuId")
-    result = run_statement("CALL get_menu_arg_ridmid(?,?)", [restaurant_id, menu_id])
+    search_name = request.args.get('searchKeyword')
+    categories_input = request.args.get('searchCategory')
+    result = run_statement("CALL get_menu_arg_ridmid(?,?,?,?)", [restaurant_id, menu_id, search_name, categories_input])
     menu_alpha = []
     if (type(result) == list):
         for menu in result:
