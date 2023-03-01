@@ -24,7 +24,7 @@ def get_restaurant():
     else:
         return make_response(jsonify(result), 500)
     
-# Make sure the required data is camelCase and the same format as the json arguments in the request.json.get 
+
 @app.post('/api/restaurant')
 def post_restaurant():
     required_data = ['name', 'address', 'city', 'email', 'phoneNum', 'password', 'bio']
@@ -55,6 +55,7 @@ def post_restaurant():
         return json.dumps(response, default=str)
     else:
         return "Sorry, something went wrong"
+
 
 @app.patch('/api/restaurant')
 def patch_restaurant():

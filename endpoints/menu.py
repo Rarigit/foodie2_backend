@@ -25,12 +25,10 @@ def get_menu():
 
 @app.post('/api/menu')
 def insert_menu():
-    # Make sure the required data is camelCase and the same format as the json arguments in the request.json.get 
     required_data = ['name', 'description', 'price']
     check_result = check_data(request.json, required_data)
     if check_result != None:
         return check_result
-    # No need for keys i guess on post request
     token_input = request.headers.get("restToken")
     restaurant_id_input = request.json.get('restaurantId')
     result_verify = run_statement("CALL verify_post_menu(?,?)", [restaurant_id_input, token_input])
@@ -40,7 +38,6 @@ def insert_menu():
         description = request.json.get('description')
         price = request.json.get('price')
         image_url = request.json.get('imageUrl')
-        # restaurant_id = request.json.get('restaurantId')
         result = run_statement("CALL insert_menu_argtk(?,?,?,?,?,?)", [token_input ,name, description, price, image_url, restaurant_id_input])
         if result == None:
             return make_response(jsonify("Menu inserted successfully"), 200)
@@ -67,7 +64,6 @@ def patch_menu():
         description = request.json.get('description')
         price = request.json.get('price')
         image_url = request.json.get('imageUrl')
-        # restaurant_id = request.json.get('restaurantId')
         result = run_statement("CALL edit_menu_argmid(?,?,?,?,?,?,?)", [token_input, id, name, description, price, image_url, restaurant_id_input])
         if result == None:
             return make_response(jsonify("Menu info updated successfully"), 200)
@@ -77,7 +73,6 @@ def patch_menu():
         return "Credential Authentication Failed. Error!"
 
 
-# Tried format(id) method by using debugger, Couldn't find any data for it as result is truly none so gonna use another method to print better responses to Postman
 @app.delete('/api/menu')
 def delete_menu():
     check_result = check_data(request.headers, ['restToken'])

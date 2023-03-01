@@ -29,7 +29,6 @@ def insert_client():
     check_result = check_data(request.json, required_data)
     if check_result != None:
         return check_result
-    # keys = ['username', 'first_name', 'last_name', 'email', 'password', 'created_at', 'picture_url']
     # No need for keys i guess on post request
     username = request.json.get('userName')
     first_name = request.json.get('firstName')
@@ -53,6 +52,7 @@ def insert_client():
         return json.dumps(response, default=str)
     else:
         return "Sorry, something went wrong"
+
 
 @app.patch('/api/client')
 def patch_client():
@@ -78,7 +78,6 @@ def patch_client():
         return make_response(jsonify("Update failed. Something went wrong"), 500)
 
 
-# Tried format(id) method by using debugger, Couldn't find any data for it as result is truly none so gonna use another method to print better responses to Postman
 @app.delete('/api/client')
 def delete_client():
     check_result = check_data(request.headers, ['token'])

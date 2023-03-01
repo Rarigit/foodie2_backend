@@ -4,9 +4,7 @@ from dbhelpers import run_statement
 from validhelpers import check_data
 import json
 
-# Also finally utilized the last order-menu-items table. Was wondering where it as used. Now it makes sense
-# Ask Mark about this. Im pretty sure you need two separate requests for client-order and restaurant-order
-# Client-order
+
 @app.get('/api/order-client')
 def get_order_client():
     # Also included items to keys to see it in my postman response code
@@ -91,8 +89,7 @@ def insert_order():
     else:
         return "The menu items do not originate from that restaurant. Error!"
 
-# Struggling with order patch security. Look at it later
-# Not sure if this one needs any extra security
+
 # Client Order Edit
 @app.patch('/api/order-client')
 def patch_order_client():
@@ -107,7 +104,6 @@ def patch_order_client():
     # Follow the same parameter order as in the stored procedure or else truncation errors occur
     print(result_verify)
     if result_verify[0][0] == 1:
-        # is_cancelled_input = request.json.get('isCancelled')
         id_input = request.json.get('orderId')
         result = run_statement("CALL edit_client_oder(?,?,?)", [token_input, is_cancelled_input, id_input])
         if result == None:

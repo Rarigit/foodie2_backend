@@ -14,7 +14,7 @@ def insert_client_login():
         return check_result
     email = request.json.get('email')
     password = request.json.get('password')
-    # I definitely need to make 2 separate procedures for this one. One that selects the id, password
+    # Make 2 separate procedures for this one. One that selects the id, password
     # Then decrypts it in PYTHON
     # Once verifies it logs in the user
     result = run_statement("CALL inser_client_login_step1(?)", [email])
