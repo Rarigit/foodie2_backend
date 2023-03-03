@@ -15,7 +15,8 @@ def get_restaurant():
     restaurant_id = request.args.get("restaurantId")
     city_input = request.args.get("searchCity")
     search_keyword = request.args.get('searchKeyword')
-    result = run_statement("CALL get_restaurant_argid(?,?,?)", [restaurant_id, city_input, search_keyword])
+    categories_input = request.args.get('searchCategory')
+    result = run_statement("CALL get_restaurant_argid(?,?,?,?)", [restaurant_id, city_input, search_keyword, categories_input])
     restaurant_alpha = []
     if (type(result) == list):
         for restaurant in result:
