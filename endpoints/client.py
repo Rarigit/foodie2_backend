@@ -51,7 +51,8 @@ def insert_client():
         print("New client recorded in DB!")
         return json.dumps(response, default=str)
     else:
-        return "Sorry, something went wrong"
+        return "Sorry, something went wrong."
+    # 409 code. Duplicate error
 
 
 @app.patch('/api/client')

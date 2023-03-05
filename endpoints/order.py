@@ -72,7 +72,7 @@ def insert_order():
     client_id_input = request.json.get("clientId")
     restaurant_id_input= request.json.get('restaurantId')
     menu_item_id_input = request.json.get('menuItemId')
-    # Made an extra request.json for menu_item_id as I need to verify that both menu item and restaurant originate from the same row
+    # Made an extra request.json for menu_item_id as I need to verify that both menu item and restaurant originate from the same row 
     verify_item_store = run_statement("CALL get_itemid_restaurantid_verified(?,?)", [menu_item_id_input, restaurant_id_input])
     print(verify_item_store)
     if verify_item_store[0][0] == 1:

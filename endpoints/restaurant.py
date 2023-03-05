@@ -9,6 +9,7 @@ import time
 
 # Make sure keys are put in the same order as they are in the DB tables. That way it matches with the postman response output
 # Completed Bonus Restaurant Categories and Bonus Search capabilities by name and Bonus Regional filtering
+#Edited sql procedure after presentation. Made all parameters truly optional instead of mandatory
 @app.get('/api/restaurant')
 def get_restaurant():
     keys = ['id', 'name', 'address', 'city', 'email', 'phoneNum', 'password', 'profileUrl', 'bannerUrl', 'bio']
@@ -25,7 +26,7 @@ def get_restaurant():
     else:
         return make_response(jsonify(result), 500)
     
-
+#Edited post endpoint to include more specific error messages that are human readable and takes into account common user error.
 @app.post('/api/restaurant')
 def post_restaurant():
     required_data = ['name', 'address', 'city', 'email', 'phoneNum', 'password', 'bio']
@@ -47,15 +48,24 @@ def post_restaurant():
     banner_url = request.json.get('bannerUrl')
     bio = request.json.get('bio')
     result = run_statement("CALL insert_restaurant(?,?,?,?,?,?,?,?,?)", [name, address, city, email, phone_num, hash_result, profile_url, banner_url, bio])
-    if (type(result) == list):
-        response = {
-                        'restaurantId' : result[0][0],
-                        'token' : result[0][1],
-        }
-        print("New Restaurant recorded in DB!")
-        return json.dumps(response, default=str)
+    if "restaurant_UN_email" in result:
+        return make_response(jsonify("Error: This email is already in use. Use another email."), 422)
+    elif "chk_city" in result:
+        return make_response(jsonify("Error: Chosen city unavailable, choose from approved city list."), 422)
+    elif "restaurant_CHECK_email" in result:
+        return make_response(jsonify("Error: Email must be in valid email format."), 422)
+    elif "restaurant_CHECK" in result:
+        return make_response(jsonify("Error: Phone Number must be in valid format: xxx-xxx-xxxx"), 422)
     else:
-        return "Sorry, something went wrong"
+        if (type(result) == list):
+            response = {
+                            'restaurantId' : result[0][0],
+                            'token' : result[0][1],
+            }
+            print("New Restaurant recorded in DB!")
+            return json.dumps(response, default=str)
+        else:
+            return "Sorry, something went wrong"
 
 
 @app.patch('/api/restaurant')
@@ -68,7 +78,7 @@ def patch_restaurant():
     name = request.json.get('name')
     address = request.json.get('address')
     city = request.json.get('city')
-    email = request.json.get('email')
+    # email = request.json.get('email')
     phone = request.json.get('phone')
     password = request.json.get('password')
     start = time.time_ns()
@@ -79,7 +89,7 @@ def patch_restaurant():
     profile_url = request.json.get('profileUrl')
     banner_url = request.json.get('bannerUrl')
     bio = request.json.get('bio')
-    result = run_statement("CALL edit_restaurant_tokenarg(?,?,?,?,?,?,?,?,?,?)", [token_input, name, address, city, email, phone, hash_result, profile_url, banner_url, bio])
+    result = run_statement("CALL edit_restaurant_tokenarg(?,?,?,?,?,?,?,?,?)", [token_input, name, address, city, phone, hash_result, profile_url, banner_url, bio])
     if result == None:
         return make_response(jsonify("Restaurant info updated successfully"), 200)
     else:

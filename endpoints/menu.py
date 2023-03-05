@@ -6,6 +6,7 @@ from validhelpers import check_data
 
 
 # Completed bonus menu category and Bonus search capability for menu items
+# Need to patch this as well. Done restaurant
 @app.get('/api/menu')
 def get_menu():
     keys = ['id', 'name', 'description', 'price', 'imageUrl', 'restaurantId', 'searchCategory']
@@ -47,7 +48,7 @@ def insert_menu():
         return "Credential Authentication failed. Error!"
 
 
-
+#Updated Patch procedure to the correct way presented ny Siobhan. This is the correct implementation of Patch, as now all my optional parameters can be NULL 0r "" in postman.
 @app.patch('/api/menu')
 def patch_menu():
     required_data = ['restToken']
@@ -64,8 +65,8 @@ def patch_menu():
         description = request.json.get('description')
         price = request.json.get('price')
         image_url = request.json.get('imageUrl')
-        result = run_statement("CALL edit_menu_argmid(?,?,?,?,?,?,?)", [token_input, id, name, description, price, image_url, restaurant_id_input])
-        if result == None:
+        result = run_statement("CALL edit_menu_argmid(?,?,?,?,?,?)", [token_input, id, name, description, price, image_url])
+        if result[0][0] == 0:
             return make_response(jsonify("Menu info updated successfully"), 200)
         else:
             return make_response(jsonify("Menu info update failed. Something went wrong"), 500)
