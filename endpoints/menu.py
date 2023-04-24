@@ -48,7 +48,7 @@ def insert_menu():
         return "Credential Authentication failed. Error!"
 
 
-#Updated Patch procedure to the correct way presented ny Siobhan. This is the correct implementation of Patch, as now all my optional parameters can be NULL 0r "" in postman.
+#Updated Patch procedure to the correct way presented by Siobhan. This is the correct implementation of Patch, as now all my optional parameters can be NULL 0r "" in postman.
 @app.patch('/api/menu')
 def patch_menu():
     required_data = ['restToken']

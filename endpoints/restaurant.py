@@ -67,7 +67,8 @@ def post_restaurant():
         else:
             return "Sorry, something went wrong"
 
-
+#Edited my patch restaurant sql procedure to allow for null values BUT since phone number and city have check constraints it overrides my new procedure.
+#So a patch always needs a correct city and phone number input even if you dont wanna change it
 @app.patch('/api/restaurant')
 def patch_restaurant():
     required_data = ['token']

@@ -10,7 +10,7 @@ import time
 
 @app.get('/api/client')
 def get_client():
-    keys = ['username', 'first_name', 'last_name', 'email', 'created_at', 'picture_url', 'client_id']
+    keys = ['username', 'first_name', 'last_name', 'email', 'created_at', 'client_id']
     token_input = request.headers.get("token")
     result = run_statement("CALL get_client_tokenarg(?)", [token_input])
     client_alpha = []
@@ -41,8 +41,7 @@ def insert_client():
     finish = time.time_ns()
     print(f"This encryption took {(finish-start)/1000000000} seconds")
     created_at = request.json.get('createdAt')
-    picture_url = request.json.get('pictureUrl')
-    result = run_statement("CALL insert_client(?,?,?,?,?,?,?)", [username, first_name, last_name, email, hash_result, created_at, picture_url])
+    result = run_statement("CALL insert_client(?,?,?,?,?,?,?)", [username, first_name, last_name, email, hash_result, created_at])
     if (type(result) == list):
         response = {
                         'clientId' : result[0][0],
@@ -55,6 +54,7 @@ def insert_client():
     # 409 code. Duplicate error
 
 
+#Changed my sql procedure for a more accurate patch endpoint to allow for null values.
 @app.patch('/api/client')
 def patch_client():
     required_data = ['token']
@@ -71,8 +71,8 @@ def patch_client():
     username = request.json.get('userName')
     first_name = request.json.get('firstName')
     last_name = request.json.get('lastName')
-    picture_url = request.json.get('pictureUrl')
-    result = run_statement("CALL edit_client_tokenarg(?,?,?,?,?,?)", [token_input, hash_result, username, first_name, last_name, picture_url])
+    # picture_url = request.json.get('pictureUrl')
+    result = run_statement("CALL edit_client_tokenarg(?,?,?,?,?,?)", [token_input, hash_result, username, first_name, last_name])
     if result == None:
         return make_response(jsonify("Client info updated successfully"), 200)
     else:

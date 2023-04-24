@@ -60,6 +60,7 @@ def get_order_restaurant():
 # Since its only signed in clients i think it might be a clientToken that is required. Need to confirm 
 # Only did is-cancelled input because it was a client side insert and clients can only cancel an order. Looks like data truncation issue affects all columns too 
 # Convert the True/False str boolean to an int as my "isCancelled" column is of TinyInt(1) which is an integer 0/1 representing True or False in my stored procedure
+#Final changes to the post order endpoint utilizing Mark's advice from the presentation
 @app.post('/api/order')
 def insert_order():
     keys = ['orderId', 'clientId', 'restaurantId', 'isConfirmed', 'isComplete', 'isCancelled', 'createdAt', 'items']
@@ -82,7 +83,10 @@ def insert_order():
         order_id = result[0][0] 
         if (type(result) == list):
             for item in item_input:
-                result = run_statement("CALL insert_order_item(?,?)", [item, order_id]) 
+            #Here I'm adding another check to confirm each item in the list of items within the loop belongs to the correct restaurant
+                verify_item_store = run_statement("CALL get_itemid_restaurantid_verified(?,?)", [menu_item_id_input, restaurant_id_input])
+                if verify_item_store[0][0] == 1:
+                    result = run_statement("CALL insert_order_item(?,?)", [item, order_id]) 
             return make_response(jsonify("Order-id selected and items list inserted successfully"), 200)
         else:
             return make_response(jsonify(result), 500)
