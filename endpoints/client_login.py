@@ -6,6 +6,10 @@ import json
 import bcrypt
 import time
 
+# Make 2 separate procedures for this one. One that selects the id, password
+# Then decrypts it in PYTHON
+# Once verifies it logs in the user
+
 @app.post('/api/client-login')
 def insert_client_login():
     required_data = ['email', 'password',]
@@ -14,28 +18,23 @@ def insert_client_login():
         return check_result
     email = request.json.get('email')
     password = request.json.get('password')
-    # Make 2 separate procedures for this one. One that selects the id, password
-    # Then decrypts it in PYTHON
-    # Once verifies it logs in the user
     result = run_statement("CALL inser_client_login_step1(?)", [email])
-    if isinstance(result, list) and len(result) > 0 and len(result[0]) > 0:
-        client_id_value = result[0][0]
+    if(type(result) == list):
+        if result == []:
+            return make_response(jsonify('Incorrect email address, please re-enter email.'), 400)
+        # client_id_value = result[0][0]
         hashed_password = result[0][1]
         if (bcrypt.checkpw(password.encode(), hashed_password.encode())):
-            result2 = run_statement("CALL insert_client_login_step2(?)", [client_id_value])
-            if isinstance(result2, list):
+            result2 = run_statement("CALL insert_client_login_step2(?)", [result[0][0]])
+            if (type(result) == list):
                 response = {
                             'clientId' : result2[0][0],
                             'token' : result2[0][1],
                 }
                 print("New Client-login session recorded in DB!")
                 return json.dumps(response, default=str)
-            else:
-                return "Sorry, something went wrong"
         else:
-            return "Invalid email or password"
-    else:
-        return "Invalid email or password"
+            return make_response(jsonify("Error, please try again."), 400)
     
 
 @app.delete('/api/client-login')

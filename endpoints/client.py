@@ -40,8 +40,8 @@ def insert_client():
     hash_result = bcrypt.hashpw(password.encode(), salt)
     finish = time.time_ns()
     print(f"This encryption took {(finish-start)/1000000000} seconds")
-    created_at = request.json.get('createdAt')
-    result = run_statement("CALL insert_client(?,?,?,?,?,?,?)", [username, first_name, last_name, email, hash_result, created_at])
+    # created_at = request.json.get('createdAt')
+    result = run_statement("CALL insert_client(?,?,?,?,?)", [username, first_name, last_name, email, hash_result])
     if (type(result) == list):
         response = {
                         'clientId' : result[0][0],
@@ -72,7 +72,7 @@ def patch_client():
     first_name = request.json.get('firstName')
     last_name = request.json.get('lastName')
     # picture_url = request.json.get('pictureUrl')
-    result = run_statement("CALL edit_client_tokenarg(?,?,?,?,?,?)", [token_input, hash_result, username, first_name, last_name])
+    result = run_statement("CALL edit_client_tokenarg(?,?,?,?,?)", [token_input, hash_result, username, first_name, last_name])
     if result == None:
         return make_response(jsonify("Client info updated successfully"), 200)
     else:
