@@ -12,7 +12,7 @@ import time
 #Edited sql procedure after presentation. Made all parameters truly optional instead of mandatory
 @app.get('/api/restaurant')
 def get_restaurant():
-    keys = ['id', 'name', 'address', 'city', 'email', 'phoneNum', 'password', 'profileUrl', 'bannerUrl', 'bio']
+    keys = ['id', 'name', 'address', 'city', 'email', 'phoneNum', 'bannerUrl', 'bio']
     restaurant_id = request.args.get("restaurantId")
     city_input = request.args.get("searchCity")
     search_keyword = request.args.get('searchKeyword')
