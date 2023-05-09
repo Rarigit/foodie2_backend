@@ -72,26 +72,26 @@ def insert_order():
     token_input = request.headers.get("clientToken")
     client_id_input = request.json.get("clientId")
     restaurant_id_input= request.json.get('restaurantId')
-    menu_item_id_input = request.json.get('menuItemId')
+    # menu_item_id_input = request.json.get('menuItemId')
     # Made an extra request.json for menu_item_id as I need to verify that both menu item and restaurant originate from the same row 
-    verify_item_store = run_statement("CALL get_itemid_restaurantid_verified(?,?)", [menu_item_id_input, restaurant_id_input])
-    print(verify_item_store)
-    if verify_item_store[0][0] == 1:
-        item_input = request.json.get('items')
-        result = run_statement("CALL create_order(?,?,?)", [token_input, client_id_input, restaurant_id_input])
+    # verify_item_store = run_statement("CALL get_itemid_restaurantid_verified(?,?)", [menu_item_id_input, restaurant_id_input])
+    # print(verify_item_store)
+    # if verify_item_store[0][0] == 1:
+    item_input = request.json.get('items')
+    result = run_statement("CALL create_order(?,?,?)", [token_input, client_id_input, restaurant_id_input])
         # This basically will extract the result generated which is a list of lists of order id Ex. [[23,]]
-        order_id = result[0][0] 
-        if (type(result) == list):
-            for item in item_input:
+    order_id = result[0][0] 
+    # if (type(result) == list):
+    for item in item_input:
             #Here I'm adding another check to confirm each item in the list of items within the loop belongs to the correct restaurant
-                verify_item_store = run_statement("CALL get_itemid_restaurantid_verified(?,?)", [menu_item_id_input, restaurant_id_input])
-                if verify_item_store[0][0] == 1:
-                    result = run_statement("CALL insert_order_item(?,?)", [item, order_id]) 
-            return make_response(jsonify("Order-id selected and items list inserted successfully"), 200)
-        else:
-            return make_response(jsonify(result), 500)
+            # verify_item_store = run_statement("CALL get_itemid_restaurantid_verified(?,?)", [menu_item_id_input, restaurant_id_input])
+            # if verify_item_store[0][0] == 1:
+        result = run_statement("CALL insert_order_item(?,?)", [item, order_id]) 
+        return make_response(jsonify("Order-id selected and items list inserted successfully"), 200)
     else:
         return "The menu items do not originate from that restaurant. Error!"
+    # else:
+    #     return "The menu items do not originate from that restaurant. Error!"
 
 
 # Client Order Edit
