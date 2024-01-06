@@ -9,7 +9,8 @@ import json
 def get_order_client():
     # Also included items to keys to see it in my postman response code
     keys = ['orderId', 'clientId', 'restaurantId', 'isConfirmed', 'isComplete', 'isCancelled', 'createdAt', 'items']
-    token_input = request.headers.get("clientToken")
+    # token_input = request.headers.get("clientToken")
+    token_input = request.headers.get("Token")
     client_id_input = request.args.get("clientId")
     result_verify = run_statement("CALL get_order_tkid_verify(?,?)", [client_id_input, token_input])
     if result_verify[0][0] == 1:
@@ -65,33 +66,45 @@ def get_order_restaurant():
 def insert_order():
     keys = ['orderId', 'clientId', 'restaurantId', 'isConfirmed', 'isComplete', 'isCancelled', 'createdAt', 'items']
     # cut out items for now in required data
-    required_data = ['restaurantId']
-    check_result = check_data(request.json, required_data)
-    if check_result != None:
-        return check_result
-    token_input = request.headers.get("clientToken")
+    # required_data = ['clientToken','restaurantId']
+    # check_result = check_data(request.json, required_data)
+    # if check_result != None:
+    #     return check_result
+    token_input = request.headers.get("Token")
+    # token_input = request.headers.get("clientToken")
+    print("Received token:", token_input) 
+    print(request.headers)
     client_id_input = request.json.get("clientId")
     restaurant_id_input= request.json.get('restaurantId')
     # menu_item_id_input = request.json.get('menuItemId')
-    # Made an extra request.json for menu_item_id as I need to verify that both menu item and restaurant originate from the same row 
+    # # Made an extra request.json for menu_item_id as I need to verify that both menu item and restaurant originate from the same row 
     # verify_item_store = run_statement("CALL get_itemid_restaurantid_verified(?,?)", [menu_item_id_input, restaurant_id_input])
     # print(verify_item_store)
-    # if verify_item_store[0][0] == 1:
-    item_input = request.json.get('items')
+    # if 1 == 1:
+    # item_input = request.json.get('items')
     result = run_statement("CALL create_order(?,?,?)", [token_input, client_id_input, restaurant_id_input])
         # This basically will extract the result generated which is a list of lists of order id Ex. [[23,]]
-    order_id = result[0][0] 
-    # if (type(result) == list):
-    for item in item_input:
+    # order_id = result[0][0] 
+    if (type(result) == list):
+        order_id = result[0][0] 
+        item_id_input = request.json.get('items')
+    # if result is not None and len(result) > 0:
+    # if (type(result) == None):
+        for item in item_id_input:
             #Here I'm adding another check to confirm each item in the list of items within the loop belongs to the correct restaurant
             # verify_item_store = run_statement("CALL get_itemid_restaurantid_verified(?,?)", [menu_item_id_input, restaurant_id_input])
-            # if verify_item_store[0][0] == 1:
-        result = run_statement("CALL insert_order_item(?,?)", [item, order_id]) 
-        return make_response(jsonify("Order-id selected and items list inserted successfully"), 200)
-    else:
-        return "The menu items do not originate from that restaurant. Error!"
+            # # verify_item_store[0][0] == 1
+            result_two = run_statement("CALL insert_order(?,?)", [item, order_id])
+            if (type(result_two) == list):
+                if result_two[0][0] == 1:
+                    return make_response(jsonify(f"Successfully Sent Order {order_id} to Restaurant"), 200)
+                elif result_two[0][0] == 0:
+                    return make_response(jsonify("Error: Order was not sent, please try again."), 500)
+            # return make_response(jsonify("Order-id selected and items list inserted successfully"), 200)
     # else:
     #     return "The menu items do not originate from that restaurant. Error!"
+    else:
+        return make_response(jsonify(result), 500)
 
 
 # Client Order Edit
