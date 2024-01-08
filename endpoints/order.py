@@ -11,8 +11,11 @@ def get_order_client():
     keys = ['orderId', 'clientId', 'restaurantId', 'isConfirmed', 'isComplete', 'isCancelled', 'createdAt', 'items']
     # token_input = request.headers.get("clientToken")
     token_input = request.headers.get("Token")
-    client_id_input = request.args.get("clientId")
+    print(request.headers)
+    client_id_input = request.args.get("client")
+    print(request.args)
     result_verify = run_statement("CALL get_order_tkid_verify(?,?)", [client_id_input, token_input])
+    print("result_verify:", result_verify)
     if result_verify[0][0] == 1:
         id_input = request.args.get("orderId")
         result = run_statement("CALL get_order_client_argoid(?,?)", [token_input, id_input])
