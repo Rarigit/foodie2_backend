@@ -113,12 +113,18 @@ def insert_order():
 # Client Order Edit
 @app.patch('/api/order-client')
 def patch_order_client():
-    required_data = ['clientToken']
+    # required_data = ['clientToken']
+    required_data = ['Token']
     check_result = check_data(request.headers, required_data)
     if check_result != None:
         return check_result
-    token_input = request.headers.get('clientToken')
-    client_id_input = request.json.get("clientId")
+    # token_input = request.headers.get('clientToken') 
+    token_input = request.headers.get("Token")
+    print("Received token:", token_input) 
+    print(request.headers)
+    client_id_input = request.args.get("client")
+    print(request.args)
+    # client_id_input = request.json.get("clientId")
     is_cancelled_input = request.json.get('isCancelled')
     result_verify = run_statement("CALL get_cliord_patch_verify(?,?)", [client_id_input, token_input])
     # Follow the same parameter order as in the stored procedure or else truncation errors occur
