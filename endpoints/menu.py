@@ -29,8 +29,14 @@ def insert_menu():
     check_result = check_data(request.json, required_data)
     if check_result != None:
         return check_result
-    token_input = request.headers.get("restToken")
-    restaurant_id_input = request.json.get('restaurantId')
+    # token_input = request.headers.get("restaurantToken")
+    token_input = request.headers.get("Token")
+    print(token_input)
+    # print(request.headers)
+    restaurant_id_input = request.headers.get('restaurantID')
+    # restaurant_id_input = request.json.get('restaurantId')
+    print(restaurant_id_input)
+    print(request.json)
     result_verify = run_statement("CALL verify_post_menu(?,?)", [restaurant_id_input, token_input])
     print(result_verify)
     if result_verify[0][0] == 1:
@@ -50,21 +56,28 @@ def insert_menu():
 #Updated Patch procedure to the correct way presented by Siobhan. This is the correct implementation of Patch, as now all my optional parameters can be NULL 0r "" in postman.
 @app.patch('/api/menu')
 def patch_menu():
-    required_data = ['restToken']
+    required_data = ['Token']
     check_result = check_data(request.headers, required_data)
     if check_result != None:
         return check_result
-    token_input = request.headers.get("restToken")
-    restaurant_id_input = request.json.get('restaurantId')
+    # token_input = request.headers.get("restToken")
+    # restaurant_id_input = request.json.get('restaurantId')
+    token_input = request.headers.get("Token")
+    print(token_input)
+    restaurant_id_input = request.headers.get('restaurantID')
+    print(restaurant_id_input)
+    print(request.json)
     result_verify = run_statement("CALL verify_patch_menu(?,?)", [restaurant_id_input, token_input])
     print(result_verify)
     if result_verify[0][0] == 1:
-        id = request.json.get('menuId')
-        name = request.json.get('name')
-        description = request.json.get('description')
-        price = request.json.get('price')
-        image_url = request.json.get('imageUrl')
-        result = run_statement("CALL edit_menu_argmid(?,?,?,?,?,?)", [token_input, id, name, description, price, image_url])
+        id_input = request.json.get('menuId')
+        # id = request.json.get('menuID')
+        print(id)
+        name_input = request.json.get('name')
+        description_input = request.json.get('description')
+        price_input = request.json.get('price')
+        image_url_input = request.json.get('imageUrl')
+        result = run_statement("CALL edit_menu_argmid(?,?,?,?,?,?)", [token_input, id_input, name_input, description_input, price_input, image_url_input])
         if result[0][0] == 0:
             return make_response(jsonify("Menu info updated successfully"), 200)
         else:
