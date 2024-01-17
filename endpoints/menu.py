@@ -78,7 +78,8 @@ def patch_menu():
         price_input = request.json.get('price')
         image_url_input = request.json.get('imageUrl')
         result = run_statement("CALL edit_menu_argmid(?,?,?,?,?,?)", [token_input, id_input, name_input, description_input, price_input, image_url_input])
-        if result[0][0] == 0:
+        if result[0][0] == 1:
+            #Finally got the correct return statement i wanted. Changed the conditional check from 0 to 1. Tested in d-beaver script and i saw that all the results were giving me a value of 1.
             return make_response(jsonify("Menu info updated successfully"), 200)
         else:
             return make_response(jsonify("Menu info update failed. Something went wrong"), 500)
@@ -88,11 +89,11 @@ def patch_menu():
 
 @app.delete('/api/menu')
 def delete_menu():
-    check_result = check_data(request.headers, ['restToken'])
+    check_result = check_data(request.headers, ['Token'])
     if check_result != None:
         return check_result
-    token_input = request.headers.get('restToken')
-    restaurant_id_input = request.json.get('restaurantId')
+    token_input = request.headers.get('Token')
+    restaurant_id_input = request.headers.get('restaurantID')
     result_verify = run_statement("CALL verify_delete_menu(?,?)", [restaurant_id_input, token_input])
     print(result_verify)
     if result_verify[0][0] == 1:
