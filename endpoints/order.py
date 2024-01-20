@@ -37,8 +37,10 @@ def get_order_client():
 @app.get('/api/order-restaurant')
 def get_order_restaurant():
     keys = ['orderId', 'clientId', 'restaurantId', 'isConfirmed', 'isComplete', 'isCancelled', 'createdAt', 'items']
-    token_input = request.headers.get("restToken")
-    restaurant_id_input = request.args.get("restaurantId")
+    token_input = request.headers.get("Token")
+    print(token_input)
+    restaurant_id_input = request.headers.get("restaurantID")
+    print(request.headers)
     result_verify = run_statement("CALL get_order_tkid_verify_restaurant(?,?)", [restaurant_id_input, token_input])
     if result_verify[0][0] == 1:
         id_input = request.args.get("orderId")
@@ -149,19 +151,20 @@ def patch_order_client():
 # Restaurant Order Edit
 @app.patch('/api/order-restaurant')
 def patch_order_restaurant():
-    required_data = ['restToken']
+    required_data = ['Token']
     check_result = check_data(request.headers, required_data)
     if check_result != None:
         return check_result
-    token_input = request.headers.get("restToken")
-    restaurant_id_input = request.json.get('restaurantId')
-    is_confirmed_input = request.json.get('isConfirmed')
-    is_completed_input = request.json.get('isCompleted')
+    token_input = request.headers.get("Token")
+    restaurant_id_input = request.headers.get('restaurantID')
+    is_confirmed_input = request.json.get('confirmOrder')
+    is_complete_input = request.json.get('completeOrder')
+    print(is_complete_input)
     result_verify = run_statement("CALL verify_patch_order_store(?,?)", [restaurant_id_input, token_input])
     print(result_verify)
     if result_verify[0][0] == 1:
         id_input = request.json.get('orderId')
-        result = run_statement("CALL edit_restaurant_order(?,?,?,?)", [token_input, is_confirmed_input, is_completed_input, id_input])
+        result = run_statement("CALL edit_restaurant_order(?,?,?,?)", [token_input, is_confirmed_input, is_complete_input, id_input])
         if result == None:
             return make_response(jsonify("Restaurant Order info updated successfully"), 200)
         else:
