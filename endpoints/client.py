@@ -57,11 +57,11 @@ def insert_client():
 #Changed my sql procedure for a more accurate patch endpoint to allow for null values.
 @app.patch('/api/client')
 def patch_client():
-    required_data = ['token']
+    required_data = ['Token']
     check_result = check_data(request.headers, required_data)
     if check_result != None:
         return check_result
-    token_input = request.headers.get("token")
+    token_input = request.headers.get("Token")
     password = request.json.get('password')
     start = time.time_ns()
     salt = bcrypt.gensalt(rounds=12)
@@ -81,21 +81,20 @@ def patch_client():
 
 @app.delete('/api/client')
 def delete_client():
-    check_result = check_data(request.headers, ['token'])
+    check_result = check_data(request.headers, ['Token'])
     if check_result != None:
         return check_result
-    token = request.headers.get('token')
-    client_id_input = request.json.get('clientId')
-    result_verify = run_statement("CALL verify_delete_client(?,?)", [client_id_input, token])
+    token_input = request.headers.get('Token')
+    client_id_input = request.headers.get('client')
+    result_verify = run_statement("CALL verify_delete_client(?,?)", [client_id_input, token_input])
     print(result_verify)
     if result_verify[0][0] == 1:
-        result = run_statement("CALL delete_client_tkarg(?)", [token])
+        result = run_statement("CALL delete_client_tkarg(?)", [token_input])
         if result == None:
             return make_response(jsonify("Successfully deleted client"), 200)
         else:
             return make_response(jsonify("Failed to delete client. Something went wrong"), 500)
     else:
         return "Credential Authentication failed. Error!"
-    
     
 
