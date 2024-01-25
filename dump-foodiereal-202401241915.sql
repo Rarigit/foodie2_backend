@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 5.5.62, for Win64 (AMD64)
+-- MySQL dump 10.13  Distrib 8.0.19, for Win64 (x86_64)
 --
 -- Host: 35.223.135.253    Database: foodiereal
 -- ------------------------------------------------------
@@ -7,7 +7,7 @@
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -21,7 +21,7 @@
 
 DROP TABLE IF EXISTS `client_session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `client_session` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `client_id` int(10) unsigned NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE `client_session` (
   UNIQUE KEY `client_session_UN_token` (`token`),
   KEY `client_session_FK_user` (`client_id`),
   CONSTRAINT `client_session_FK_user` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=206 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,7 +39,7 @@ CREATE TABLE `client_session` (
 
 DROP TABLE IF EXISTS `clients`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `clients` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(100) NOT NULL,
@@ -47,12 +47,12 @@ CREATE TABLE `clients` (
   `last_name` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(100) NOT NULL,
-  `created_at` date DEFAULT current_timestamp(),
+  `created_at` datetime DEFAULT current_timestamp(),
   `picture_url` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `clients_UN_pass` (`password`),
   UNIQUE KEY `clients_UN_email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,19 +61,19 @@ CREATE TABLE `clients` (
 
 DROP TABLE IF EXISTS `menu_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `menu_items` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
   `description` text NOT NULL,
-  `price` decimal(10,2) NOT NULL,
+  `price` varchar(5) NOT NULL,
   `image_url` text DEFAULT NULL,
   `restaurant_id` int(10) unsigned NOT NULL,
   `categories` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `menu_items_FK_restid` (`restaurant_id`),
   CONSTRAINT `menu_items_FK_restid` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,7 +82,7 @@ CREATE TABLE `menu_items` (
 
 DROP TABLE IF EXISTS `order_menu_items`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `order_menu_items` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `item_id` int(10) unsigned NOT NULL,
@@ -92,7 +92,7 @@ CREATE TABLE `order_menu_items` (
   KEY `order_menu_items_FK_order` (`order_id`),
   CONSTRAINT `order_menu_items_FK_item` FOREIGN KEY (`item_id`) REFERENCES `menu_items` (`id`),
   CONSTRAINT `order_menu_items_FK_order` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=95 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,7 +101,7 @@ CREATE TABLE `order_menu_items` (
 
 DROP TABLE IF EXISTS `orders`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `orders` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `client_id` int(10) unsigned DEFAULT NULL,
@@ -115,7 +115,7 @@ CREATE TABLE `orders` (
   KEY `orders_FK_client` (`client_id`),
   CONSTRAINT `orders_FK_client` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE SET NULL,
   CONSTRAINT `orders_FK_restaurant` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=43 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -124,7 +124,7 @@ CREATE TABLE `orders` (
 
 DROP TABLE IF EXISTS `restaurant`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `restaurant` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL,
@@ -140,8 +140,9 @@ CREATE TABLE `restaurant` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `restaurant_UN_email` (`email`),
   CONSTRAINT `restaurant_CHECK` CHECK (`phone_num` like '___-___-____'),
-  CONSTRAINT `chk_city` CHECK (`city` in ('Calgary','Edmonton','Vancouver','Surrey','Winnipeg','Brandon','Moncton','Fredericton','St. John\'s','Mount Pearl','Yellowknife','Inuvik','Halifax','Sydney','Iqaluit','Arviat','Toronto','Ottawa','Charlottetown','Summerside','Montreal','Quebec City','Saskatoon','Regina','Whitehorse','Dawson City'))
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  CONSTRAINT `chk_city` CHECK (`city` in ('Calgary','Edmonton','Vancouver','Surrey','Winnipeg','Brandon','Moncton','Fredericton','St. John\'s','Mount Pearl','Yellowknife','Inuvik','Halifax','Sydney','Iqaluit','Arviat','Toronto','Ottawa','Charlottetown','Summerside','Montreal','Quebec City','Saskatoon','Regina','Whitehorse','Dawson City')),
+  CONSTRAINT `restaurant_CHECK_email` CHECK (`email` regexp '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+.[a-zA-Z]{2,}$')
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -150,7 +151,7 @@ CREATE TABLE `restaurant` (
 
 DROP TABLE IF EXISTS `restaurant_session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
+/*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `restaurant_session` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `restaurant_id` int(10) unsigned NOT NULL,
@@ -159,7 +160,7 @@ CREATE TABLE `restaurant_session` (
   UNIQUE KEY `restaurant_session_UN_token` (`token`),
   KEY `restaurant_session_FK_restaurant` (`restaurant_id`),
   CONSTRAINT `restaurant_session_FK_restaurant` FOREIGN KEY (`restaurant_id`) REFERENCES `restaurant` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -301,11 +302,17 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`topdev`@`%` PROCEDURE `edit_client_tokenarg`(token_input CHAR(45), password_input CHAR(100), username_input CHAR(100), first_name_input CHAR(100), last_name_input CHAR(100), picture_url_input TEXT)
+CREATE DEFINER=`topdev`@`%` PROCEDURE `edit_client_tokenarg`(token_input CHAR(45), password_input CHAR(100), username_input CHAR(100), first_name_input CHAR(100), last_name_input CHAR(100))
     MODIFIES SQL DATA
-BEGIN
-	UPDATE clients c INNER JOIN client_session cs ON c.id = cs.client_id SET password = password_input, username = username_input, first_name = first_name_input, last_name = last_name_input, picture_url = picture_url_input 
-	WHERE cs.token = token_input; 
+BEGIN
+	UPDATE clients c 
+	INNER JOIN client_session cs ON c.id = cs.client_id
+	SET
+		username = IFNULL(username_input, username),
+		first_name = IFNULL(first_name_input, first_name),
+		last_name = IFNULL(last_name_input, last_name),
+		password = IFNULL(password_input, password)
+	WHERE cs.token = token_input;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -322,14 +329,25 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`topdev`@`%` PROCEDURE `edit_menu_argmid`(token_input CHAR(45), id_input INT UNSIGNED, name_input CHAR(100), description_input TEXT, price_input DEC(10,2), image_url_input TEXT, restaurant_id_input INT UNSIGNED)
+CREATE DEFINER=`topdev`@`%` PROCEDURE `edit_menu_argmid`(token_input CHAR(45), id_input INT UNSIGNED, name_input CHAR(100), description_input TEXT, price_input CHAR(5), image_url_input TEXT)
     MODIFIES SQL DATA
 BEGIN
-	DECLARE restaurant_id_value INT UNSIGNED;
-	SELECT restaurant_id INTO restaurant_id_value FROM restaurant_session WHERE token = token_input;
-	IF restaurant_id_value IS NOT NULL THEN
-		UPDATE menu_items SET name = name_input, description = description_input, price = price_input, image_url = image_url_input, restaurant_id = restaurant_id_input  
-		WHERE id = id_input AND restaurant_id = restaurant_id_value;
+	SELECT rs.restaurant_id INTO @rest_id FROM restaurant_session rs WHERE rs.token = token_input;
+	IF name_input IS NOT NULL THEN
+		UPDATE menu_items SET name = name_input WHERE id = id_input AND restaurant_id = @rest_id;
+		SELECT ROW_COUNT();
+	END IF;
+	IF description_input IS NOT NULL THEN 
+		UPDATE menu_items SET description = description_input WHERE id = id_input AND restaurant_id = @rest_id;
+		SELECT ROW_COUNT();
+	END IF;
+	IF price_input IS NOT NULL THEN
+		UPDATE menu_items SET price = price_input WHERE id = id_input AND restaurant_id = @rest_id;
+		SELECT ROW_COUNT();
+	END IF;
+	IF image_url_input IS NOT NULL THEN
+		UPDATE menu_items SET image_url = image_url_input WHERE id = id_input AND restaurant_id = @rest_id;
+		SELECT ROW_COUNT();
 	END IF;
 END ;;
 DELIMITER ;
@@ -373,13 +391,22 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`topdev`@`%` PROCEDURE `edit_restaurant_tokenarg`(token_input CHAR(45), name_input CHAR(100), address_input CHAR(100), city_input CHAR(100), email_input CHAR(100), phone_num_input CHAR(12), 
+CREATE DEFINER=`topdev`@`%` PROCEDURE `edit_restaurant_tokenarg`(token_input CHAR(45), name_input CHAR(100), address_input CHAR(100), city_input CHAR(100), phone_num_input CHAR(12), 
 password_input CHAR(100), profile_url_input TEXT, banner_url_input TEXT, bio_input TEXT)
     MODIFIES SQL DATA
 BEGIN
-	UPDATE restaurant r INNER JOIN restaurant_session rs ON r.id = rs.restaurant_id SET name = name_input, address = address_input, city = city_input, email = email_input, 
-	phone_num = phone_num_input, password = password_input, profile_url = profile_url_input, banner_url = banner_url_input, bio = bio_input
-	WHERE rs.token = token_input; 
+	UPDATE restaurant r 
+    INNER JOIN restaurant_session rs ON r.id = rs.restaurant_id 
+    SET 
+        name = IFNULL(name_input, name),
+        address = IFNULL(address_input, address),
+        city = IFNULL(city_input, city),
+        phone_num = IFNULL(phone_num_input, phone_num),
+        password = IFNULL(password_input, password),
+        profile_url = IFNULL(profile_url_input, profile_url),
+        banner_url = IFNULL(banner_url_input, banner_url),
+        bio = IFNULL(bio_input, bio)
+    WHERE rs.token = token_input;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -398,7 +425,7 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`topdev`@`%` PROCEDURE `get_client_tokenarg`(token_input CHAR(45))
 BEGIN
-	SELECT username, first_name, last_name, email, password, created_at, picture_url, client_id FROM clients c JOIN client_session cs ON c.id = cs.client_id WHERE token = token_input;
+	SELECT username, first_name, last_name, email, password, created_at, client_id FROM clients c JOIN client_session cs ON c.id = cs.client_id WHERE token = token_input;
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -453,16 +480,16 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`topdev`@`%` PROCEDURE `get_menu_arg_ridmid`(restaurant_id_input INT UNSIGNED, menu_id_input INT UNSIGNED, search_name VARCHAR(255), categories_input ENUM('vegan', 'halal'))
+CREATE DEFINER=`topdev`@`%` PROCEDURE `get_menu_arg_ridmid`(restaurant_id_input INT UNSIGNED, menu_id_input INT UNSIGNED, search_name VARCHAR(255))
 BEGIN
 	IF restaurant_id_input IS NOT NULL AND menu_id_input IS NOT NULL THEN
-		SELECT * FROM menu_items WHERE restaurant_id = restaurant_id_input AND id = menu_id_input AND categories = categories_input;
+		SELECT * FROM menu_items WHERE restaurant_id = restaurant_id_input AND id = menu_id_inpu;
 	ELSEIF restaurant_id_input IS NOT NULL THEN
-		SELECT * FROM menu_items WHERE restaurant_id = restaurant_id_input AND categories = categories_input;
+		SELECT * FROM menu_items WHERE restaurant_id = restaurant_id_input;
 	ELSEIF menu_id_input IS NOT NULL THEN
-		SELECT * FROM menu_items WHERE id = menu_id_input AND categories = categories_input;
+		SELECT * FROM menu_items WHERE id = menu_id_input;
 	ELSE
-		SELECt * FROM menu_items WHERE (search_name IS NULL OR name LIKE CONCAT('%', search_name, '%')) AND categories = categories_input;
+		SELECt * FROM menu_items WHERE (search_name IS NULL OR name LIKE CONCAT('%', search_name, '%'));
 	END IF;
 END ;;
 DELIMITER ;
@@ -571,12 +598,13 @@ DELIMITER ;;
 CREATE DEFINER=`topdev`@`%` PROCEDURE `get_restaurant_argid`(id_input INT UNSIGNED, city_input CHAR(100), search_name VARCHAR(255), categories_input CHAR(255))
 BEGIN
 	IF id_input IS NOT NULL THEN
-		SELECT id, name, address, city, email, phone_num, password, profile_url, banner_url, bio FROM restaurant WHERE id = id_input;
+		SELECT id, name, address, city, email, phone_num, banner_url, bio FROM restaurant WHERE id = id_input;
 	ELSE
-		SELECT id, name, address, city, email, phone_num, password, profile_url, banner_url, bio, categories FROM restaurant
-		WHERE city = city_input AND (categories_input IS NULL OR categories_input = categories) AND (search_name IS NULL OR name LIKE CONCAT('%', search_name, '%'));
+		SELECT id, name, address, city, email, phone_num, banner_url, bio, categories FROM restaurant
+		WHERE (city_input IS NULL OR city_input = city) AND (categories_input IS NULL OR categories_input = categories) AND (search_name IS NULL OR name LIKE CONCAT('%', search_name, '%'));
 	END IF;
-END ;;
+END
+-- Changed line 7 in my procedure to allow for all restaurants to be selected regardless if city input parameter is added ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
@@ -592,11 +620,11 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`topdev`@`%` PROCEDURE `insert_client`(username_input CHAR(100), first_name_input CHAR(100), last_name_input CHAR(100), email_input CHAR(100), password_input CHAR(100), created_at_input DATE, picture_url_input TEXT)
+CREATE DEFINER=`topdev`@`%` PROCEDURE `insert_client`(username_input CHAR(100), first_name_input CHAR(100), last_name_input CHAR(100), email_input CHAR(100), password_input CHAR(100))
     MODIFIES SQL DATA
 BEGIN
 	DECLARE client_id_value INT UNSIGNED;
-	INSERT INTO clients (username, first_name, last_name, email, password, created_at, picture_url) VALUES (username_input, first_name_input, last_name_input, email_input, password_input, created_at_input, picture_url_input);
+	INSERT INTO clients (username, first_name, last_name, email, password) VALUES (username_input, first_name_input, last_name_input, email_input, password_input);
 	SET client_id_value = LAST_INSERT_ID(); 
 	INSERT INTO client_session (client_id) VALUES (client_id_value);
 	SELECT client_id, token FROM client_session WHERE id = LAST_INSERT_ID(); 
@@ -651,7 +679,7 @@ DELIMITER ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;
-/*!50003 DROP PROCEDURE IF EXISTS `insert_order_item` */;
+/*!50003 DROP PROCEDURE IF EXISTS `insert_order` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
 /*!50003 SET @saved_col_connection = @@collation_connection */ ;
@@ -661,10 +689,11 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`topdev`@`%` PROCEDURE `insert_order_item`(item_id_input INT UNSIGNED, order_id_input INT UNSIGNED)
+CREATE DEFINER=`topdev`@`%` PROCEDURE `insert_order`(item_id_input INT UNSIGNED, order_id_input INT UNSIGNED)
     MODIFIES SQL DATA
 BEGIN
-	INSERT INTO order_menu_items (item_id, order_id) VALUES (item_id_input, order_id_input);
+	INSERT INTO order_menu_items (item_id, order_id) VALUES (item_id_input, order_id_input);
+	SELECT ROW_COUNT();
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -908,4 +937,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-02-28 17:42:26
+-- Dump completed on 2024-01-24 19:15:19
