@@ -4,7 +4,7 @@ from dbcreds import production_mode
 if (production_mode == True):
     print("Running server in production mode")
     import bjoern #type:ignore
-    bjoern.run(app, "0.0.0.0", 5009)
+    bjoern.run(app, "0.0.0.0", 5077)
 else:
     from flask_cors import CORS
     CORS(app)
